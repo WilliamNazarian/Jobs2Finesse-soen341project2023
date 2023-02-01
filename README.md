@@ -28,6 +28,13 @@ The main users:
 
 3. Admin : Finally, the admin oversees all user postings and profiles.
 
+4 user stories from the mentionned users above:
+
+- The website should allow users to register, make a profile, upload resumes and login to their accounts using defined log in information.
+- The platform should also allow employers to add job offers that will be visible to students that visit the website after it has been updated. They should also be able to choose applicants for interviews.
+- The platform should allow students to apply to job offeres with the resumes that they upload.
+- The admin should be able to view all of the job offers as well as the students that have applied to them. 
+
 First sprint description and updates:
 
 During our first team meeting, we have discussed our understanding of the project, got introduced to each other, understood each other's strength's and weaknesses and worked on making the Github repository, inviting all of the members and working on each of our commits. We also discussed what approaches and technologies to use:
