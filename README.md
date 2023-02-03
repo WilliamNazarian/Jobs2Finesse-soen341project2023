@@ -30,10 +30,13 @@ The purpose of this project is to create a career services platform where studen
 
 **4 user stories:**
 
-- The website should allow users to register, make a profile, upload resumes and login to their accounts using defined log in information.
-- The platform should also allow employers to add job offers that will be visible to students that visit the website after it has been updated. They should also be able to choose applicants for interviews.
-- The platform should allow students to apply to job offeres with the resumes that they upload.
-- The admin should be able to view all of the job offers as well as the students that have applied to them. 
+User Story #1 As an employer, i want to be able to filter out the candidates through criteria's such as their program major, GPA,... to hired the student that fits best with the job.
+
+User Story #2 As a student, i want to be able to filter out the location of the job site to have an even more precise job search.
+
+User Story #3 As a admin, i want to be able to make changes and manage existing accounts and add new ones, so that the website can be more comprehensible and manageable.
+
+User Story #4 As a student, i want to be able to navigate to a tab that has all my submitted applications, so that i know where i have applied.
 
 **First sprint description:**
 
