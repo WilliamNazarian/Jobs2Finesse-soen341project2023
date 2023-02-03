@@ -44,9 +44,11 @@ During our first team meeting, we have discussed our understanding of the projec
 
 TASK DIVISION:
 
--UX UI Front-end : React.Js (William Nazarian | Github : WilliamNazarian & Cleopatr-Aliak Manoukian : Kaianinja) 
--Back-end : Node.Js (Ziad Elsharkawi | Github : Ziadsharkos & Poula Farid | Github : PaulFarid)
--Database : MongoDB or Firebase (still not certain) (Omar Alshanyour | Github : hellomefriend & Sana Antoun | Github : sanaantoun)
+**React.Js** -UX UI Front-end (William Nazarian | Github : WilliamNazarian & Cleopatr-Aliak Manoukian : Kaianinja) 
+
+**Node.Js**  -Back-end (Ziad Elsharkawi | Github : Ziadsharkos & Poula Farid | Github : PaulFarid)
+
+**MongoDB**  -Database (still not certain) (Omar Alshanyour | Github : hellomefriend & Sana Antoun | Github : sanaantoun)
 
 We will be using an Agile development approach through out our project and, to support our project management procedure, we will make use of GitHub, bug tracking, software feature requests, task management, and continuous integration. The duration of the project is 10 to 12 weeks.  
 
