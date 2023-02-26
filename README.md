@@ -12,7 +12,7 @@ Ziad Elsharkawy  id: 40213438 | Github username : Ziadsharkos
 
 Omar Alshanyour id : 40209637 | Github username : hellomefriend
 
-Cleopatr-Aliak Manoukian id : tbd | Github username : Kaianinja
+Cleopatr-Aliak Manoukian id : 40211001| Github username : Kaianinja
 
 **Quick Description:** 
 
