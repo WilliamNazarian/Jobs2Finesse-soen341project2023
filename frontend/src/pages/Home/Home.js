@@ -1,9 +1,7 @@
-import MyNavbar from "../GeneralComponents/MyNavbar";
 
-function Home(){
-    return(
-       <MyNavbar/>
-    )
+
+function Home() {
+  return <></>;
 }
 
 export default Home;

@@ -1,15 +1,28 @@
-import { Routes, Route } from 'react-router-dom';
-import Home from './pages/Home/Home';
-import Login from './pages/Login/login';
-
-
+import { Routes, Route, useLocation } from "react-router-dom";
+import Home from "./pages/Home/Home";
+import Login from "./pages/Login/login";
+import MyNavbar from "./pages/GeneralComponents/MyNavbar";
+import SignUp from "./pages/signUp/signUp";
+import BrowseJobs from "./pages/BrowseJobs/BrowseJobs";
+import { deepPurple } from "@mui/material/colors";
+import EditJob from "./pages/EditJobs/EditJob";
+//import BrowseJobs from "./pages/BrowseJobs/BrowseJobs";
 
 function App() {
+  const location = useLocation();
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-    </Routes>
+    <>
+      <div style={{ backgroundColor: deepPurple[50], minHeight:"100vh", height:"100%" }}>
+        {location.pathname !== "/login" && location.pathname !== "/signup" && <MyNavbar />}
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/jobs" element={<BrowseJobs />} />
+          <Route path="/jobs/edit" element={<EditJob />} />
+        </Routes>
+      </div>
+    </>
   );
 }
 

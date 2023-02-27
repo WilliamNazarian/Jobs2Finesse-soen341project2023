@@ -12,6 +12,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import { Link as RouterLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -28,14 +29,31 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function Login() {
-  const handleSubmit = (event) => {
+export default function SignUp() {
+  const navigate = useNavigate();
+  //
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+
+    const formData = new FormData(event.currentTarget);
+    const myFetch=()=>{
+      try {
+        fetch("/postuser", {
+          method: "POST",
+          body: JSON.stringify({
+            firstName: formData.get("firstName"),
+            lastName: formData.get("lastName"),
+            email: formData.get("email"),
+            password: formData.get("password"),
+          }),
+          headers: { "Content-Type": "application/json" },
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    } 
+    myFetch();
+    navigate("/")  
   };
 
   return (
@@ -54,10 +72,16 @@ export default function Login() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Login
+            Sign up
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={3}>
+              <Grid item xs={12} sm={6}>
+                <TextField autoComplete="given-name" name="firstName" required fullWidth id="firstName" label="First Name" />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField required fullWidth id="lastName" label="Last Name" name="lastName" autoComplete="family-name" />
+              </Grid>
               <Grid item xs={12}>
                 <TextField required fullWidth id="email" label="Email Address" name="email" autoComplete="email" />
               </Grid>
@@ -70,8 +94,8 @@ export default function Login() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link component={RouterLink} to="/signup" variant="body2">
-                  Don't have an account? Sign up
+                <Link component={RouterLink} to="/login" variant="body2">
+                  Already have an account? Sign in
                 </Link>
               </Grid>
             </Grid>
