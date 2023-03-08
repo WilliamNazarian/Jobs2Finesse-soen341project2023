@@ -1,3 +1,5 @@
+https://www.youtube.com/watch?v=jhVALgKdGhE (sprint 2 demo)
+
 **Jobs2Finesse Platform!**
 
 **Members of the team:**
