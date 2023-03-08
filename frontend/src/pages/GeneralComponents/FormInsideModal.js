@@ -61,7 +61,7 @@ function FormInsideModal(props) {
   };
 
   return (
-    <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
       <Grid container spacing={4}>
         <Grid item xs={12} sm={6}>
           <TextField required inputRef={companyNameRef} fullWidth name="companyName" id="companyName" label="Company Name" variant="filled" sx={styleForFilled} />

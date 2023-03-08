@@ -52,9 +52,9 @@ export default function BrowseJobs() {
 
   const editJobHandler = (event) => {
     navigate({
-        pathname: '/jobs/edit',
-        search: `?id=${event.currentTarget.title}`,
-      })
+      pathname: "/jobs/edit",
+      search: `?id=${event.currentTarget.title}`,
+    });
   };
 
   const getAllJobs = () => {
@@ -111,7 +111,7 @@ export default function BrowseJobs() {
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
                 {clickedJob.address}
               </Typography>
-              <Typography variant="body2">{clickedJob.description ? clickedJob.description: "No Description"}</Typography>
+              <Typography variant="body2">{clickedJob.description ? clickedJob.description : "No Description"}</Typography>
             </CardContent>
             <CardActions>
               <Button title={clickedJob._id} onClick={editJobHandler} variant="contained" color="primary" size="small">

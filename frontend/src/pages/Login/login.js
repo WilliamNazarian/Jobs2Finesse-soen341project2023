@@ -1,17 +1,21 @@
 import * as React from "react";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import { Link as RouterLink } from "react-router-dom";
+import Logo from "../GeneralComponents/Logo.svg";
+import { deepPurple } from "@mui/material/colors";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../store/auth";
 
 function Copyright(props) {
   return (
@@ -29,13 +33,29 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function Login() {
-  const handleSubmit = (event) => {
+  const [loginError, setLoginError] = useState("success");
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
+    const formData = new FormData(event.currentTarget);
+    const response = await fetch("/postlogin", {
+      method: "POST",
+      body: JSON.stringify({
+        email: formData.get("email"),
+        password: formData.get("password"),
+      }),
+      headers: { "Content-Type": "application/json" },
     });
+    const data = await response.json();
+    setLoginError(data.message);
+    if (data.message === "success"){
+      //localStorage.setItem('jwtToken', data.jwtToken);
+      dispatch(authActions.setCredential({firstName: data.firstName, lastName: data.lastName, email: data.email}))
+      navigate("/");
+    } 
   };
 
   return (
@@ -50,9 +70,9 @@ export default function Login() {
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
+          <RouterLink to="/">
+            <img src={Logo} alt="Logo" width={200} style={{ display: "box", margin: "10px 0 30px", padding: "10px", borderRadius: "15px", backgroundColor: deepPurple[100] }} />
+          </RouterLink>
           <Typography component="h1" variant="h5">
             Login
           </Typography>
@@ -61,12 +81,17 @@ export default function Login() {
               <Grid item xs={12}>
                 <TextField required fullWidth id="email" label="Email Address" name="email" autoComplete="email" />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} sx={{ mb: 3 }}>
                 <TextField required fullWidth name="password" label="Password" type="password" id="password" autoComplete="new-password" />
               </Grid>
             </Grid>
-            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-              Sign Up
+            {loginError !== "success" && (
+              <Typography color="error" sx={{ p: 1, textAlign: "center" }}>
+                {loginError}
+              </Typography>
+            )}
+            <Button type="submit" fullWidth variant="contained" sx={{ mb: 2 }}>
+              Login
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
