@@ -1,4 +1,5 @@
 https://www.youtube.com/watch?v=jhVALgKdGhE (sprint 2 demo)
+https://youtu.be/O6zP0C6G3sc (sprint 3 follow up)
 
 **Jobs2Finesse Platform!**
 
