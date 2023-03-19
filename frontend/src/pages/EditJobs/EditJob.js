@@ -25,13 +25,7 @@ export default function EditJob() {
     }
   };
 
-  //   console.log(formData.get("jobType"))
-  //     await fetch("/updateJob", {
-  //       method: "POST",
-  //       body: JSON.stringify({
-  //         ,
-  //       }),
-  //     });
+ 
   const submitEditHandler = async (event) => {
     event.preventDefault();
     const newArr = [];
@@ -43,10 +37,10 @@ export default function EditJob() {
     }
     setCheckedArr(newArr);
     const formData = new FormData(event.currentTarget);
-    const myFetch = () => {
+    const myFetch = async() => {
       try {
-        fetch("/updateJob", {
-          method: "POST",
+        await fetch("/jobs", {
+          method: "PUT",
           body: JSON.stringify({
             _id: searchParams.get("id"),
             companyName: formData.get("companyName"),
@@ -68,7 +62,7 @@ export default function EditJob() {
   };
 
   const getJob = useCallback(() => {
-    fetch("/getOneJob?" + new URLSearchParams({ postId: searchParams.get("id") }))
+    fetch("/jobs/getAJob?" + new URLSearchParams({ postId: searchParams.get("id") }))
       .then((response) => response.json())
       .then((data) => setEditData(JSON.parse(data)));
   }, [searchParams]);

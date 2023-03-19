@@ -26,6 +26,8 @@ function App() {
   );
 }
 
+//add loader that verifies the backend b4 any page render
+
 export default App;
 //Paul editing
 //will editing

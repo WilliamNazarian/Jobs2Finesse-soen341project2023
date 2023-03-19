@@ -105,7 +105,7 @@ function MyNavbar() {
             </Box>
             <Box sx={{ flexGrow: 0 }}>
               {!isAuth && (
-                <Button component={Link} to={"/login"} variant="contained" size="medium" sx={{ bgcolor: deepPurple[300], "&:hover": { bgcolor: deepPurple[200] } }}>
+                <Button component={Link} to={"/login"} variant="contained" size="medium" sx={{ mt: "1.75px", mb: "1.75px", bgcolor: deepPurple[300], "&:hover": { bgcolor: deepPurple[200] } }}>
                   Sign In
                 </Button>
               )}

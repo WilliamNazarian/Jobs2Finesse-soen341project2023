@@ -5,36 +5,42 @@ import ListItemText from "@mui/material/ListItemText";
 import { List } from "@mui/material";
 import { deepPurple } from "@mui/material/colors";
 import Typography from "@mui/material/Typography";
-import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 
+import { useSelector, useDispatch } from "react-redux";
+import { submittedFormDataActions } from "../../store/submittedFormData";
+import { useEffect, useState } from "react";
+
 export default function BrowseJobs() {
   const [jobs, setJobs] = useState(null);
   const [clickedJob, setClickedJob] = useState(null);
+  const [deletedJob, setDeletedJob] = useState(false)
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const formSubmitted = useSelector((state) => state.submittedFormData.submittedFormData);
 
   const jobClickHandler = (event) => {
-    const fetchData = async () => {
+    const getAJob = async () => {
       try {
-        const response = await fetch("/getOneJob?" + new URLSearchParams({ postId: event.currentTarget.title }));
+        const response = await fetch("/jobs/getAJob?" + new URLSearchParams({ postId: event.currentTarget.title }));
         const data = await response.json();
         setClickedJob(JSON.parse(data));
       } catch (err) {
         console.log(err);
       }
     };
-    fetchData();
+    getAJob();
   };
 
-  const deleteJobHandler = useCallback((event) => {
-    const deleteData = async () => {
+  const deleteJobHandler = (event) => {
+    const deleteAJob = async () => {
       try {
-        await fetch("/deleteJob", {
+        await fetch("/jobs", {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -45,10 +51,10 @@ export default function BrowseJobs() {
         console.log(err);
       }
     };
-    deleteData();
-    getAllJobs();
+    deleteAJob();
     setClickedJob(null);
-  }, []);
+    setDeletedJob(true)
+  };
 
   const editJobHandler = (event) => {
     navigate({
@@ -59,20 +65,25 @@ export default function BrowseJobs() {
 
   const getAllJobs = () => {
     const fetchData = async () => {
-      const response = await fetch("/getJobs");
+      console.log("in get all jobs")
+      const response = await fetch("/jobs");
       const newData = await response.json();
+      console.log("got all jobs")
       setJobs(JSON.parse(newData));
     };
     fetchData();
   };
 
   useEffect(() => {
+    console.log("about to execute getAllJobs method")
     getAllJobs();
-  }, []);
+    dispatch(submittedFormDataActions.setSubmittedFormData(false));
+    setDeletedJob(false)
+  }, [dispatch, formSubmitted, deletedJob]);
 
   return (
     <>
-      <Box sx={{ width: "360px", bgcolor: deepPurple[100], position: "fixed", top: "68.5px", bottom: "0px", overflowY: "scroll" }}>
+      <Box sx={{ width: "360px", bgcolor: deepPurple[100], position: "fixed", top: "72px", bottom: "0px", overflowY: "scroll" }}>
         <Box sx={{ textAlign: "center", p: 2, bgcolor: deepPurple[200] }}>
           <Typography component="p" variant="p" sx={{ fontSize: "1.5rem" }}>
             Jobs

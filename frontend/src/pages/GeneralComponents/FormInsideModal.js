@@ -5,9 +5,13 @@ import Checkbox from "@mui/material/Checkbox";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import { lightBlue } from "@mui/material/colors";
+import { useLocation } from "react-router-dom";
 //import { Typography } from "@mui/material";
 
+//import { useNavigate } from "react-router-dom";
 import { useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { submittedFormDataActions } from "../../store/submittedFormData";
 
 const styleForFilled = {
   "& div": { bgcolor: lightBlue[200] },
@@ -24,6 +28,10 @@ function FormInsideModal(props) {
   const addressRef = useRef(null);
   const descriptionRef = useRef(null);
 
+  //const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const location = useLocation();
+
   const [checkedArr, setCheckedArr] = useState([]);
 
   const checkedBoxHandler = (event) => {
@@ -38,11 +46,11 @@ function FormInsideModal(props) {
     event.preventDefault();
     const postFetch = async () => {
       try {
-        await fetch("/postJob", {
+        await fetch("/jobs", {
           method: "POST",
           body: JSON.stringify({
             companyName: companyNameRef.current.value,
-            description: descriptionRef.current.value, 
+            description: descriptionRef.current.value,
             numberOfPositions: numOfPosRef.current.value,
             position: posOfferedRef.current.value,
             country: countryRef.current.value,
@@ -57,7 +65,7 @@ function FormInsideModal(props) {
     };
     postFetch();
     props.onSubmitForm();
-    window.location.reload(true)
+    if (location.pathname === "/jobs") dispatch(submittedFormDataActions.setSubmittedFormData(true));
   };
 
   return (
@@ -79,7 +87,7 @@ function FormInsideModal(props) {
           <TextField required fullWidth inputRef={addressRef} name="address" label="Address" id="address" variant="filled" sx={styleForFilled} />
         </Grid>
         <Grid item xs={12} sx={{ textAlign: "center" }}>
-          <TextField inputRef={descriptionRef} id="outlined-multiline-static" label="Job Descripton" multiline rows={5} sx={{...styleForFilled, width:"300px"}}  />
+          <TextField inputRef={descriptionRef} id="outlined-multiline-static" label="Job Descripton" multiline rows={5} sx={{ ...styleForFilled, width: "300px" }} />
         </Grid>
         <Grid item xs={12} sx={{ textAlign: "center" }}>
           <FormControlLabel control={<Checkbox value="fullTime" color="primary" onChange={checkedBoxHandler} />} label="Full Time:" labelPlacement="start" />
