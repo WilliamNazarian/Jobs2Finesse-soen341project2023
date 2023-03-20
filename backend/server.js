@@ -24,40 +24,6 @@ app.use("/jobs", jobsRoutes)
 
 
 
-
-
-
-
-
-
-
-// app.get("/getJobs", async (req, res) => {
-//   try {
-//     const jsonJobs = await Job.find();
-//     res.json(JSON.stringify(jsonJobs));
-//   } catch (err) {
-//     res.json({ message: err });
-//   }
-// });
-
-// app.get("/getOneJob", async (req, res) => {
-//   try {
-//     const jsonJobs = await Job.findById(req.query.postId);
-//     res.json(JSON.stringify(jsonJobs));
-//   } catch (err) {
-//     res.json({ message: err });
-//   }
-// });
-
-// app.post("/postJob", async (req, res) => {
-//   try {
-//     const createJob = new Job(req.body);
-//     await createJob.save();
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
-
 app.post("/postuser", async (req, res) => {
   const { email, password, firstName, lastName } = req.body;
   const userWithSameEmail = await User.findOne({ email: email });
@@ -96,24 +62,7 @@ app.post("/postlogin", async (req, res) => {
   else return res.json({message: "Incorrect Password"})
 });
 
-// app.delete("/deleteJob", async (req, res) => {
-//   try {
-//     const jsonJobs = await Job.deleteOne({ _id: req.body.id });
-//   } catch (err) {
-//     res.json({ message: err });
-//   }
-// });
 
-// app.post("/updateJob", async (req, res) => {
-//   try {
-//     const doc = await Job.findOne({ _id: req.body._id });
-//     const update = req.body;
-
-//     await doc.updateOne(update);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
 
 app.listen(5000, () => {
   console.log("Server running on port 5000");

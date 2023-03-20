@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 export default function BrowseJobs() {
   const [jobs, setJobs] = useState(null);
   const [clickedJob, setClickedJob] = useState(null);
-  const [deletedJob, setDeletedJob] = useState(false)
+  const [deletedJob, setDeletedJob] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ export default function BrowseJobs() {
       try {
         const response = await fetch("/jobs/getAJob?" + new URLSearchParams({ postId: event.currentTarget.title }));
         const data = await response.json();
-        setClickedJob(JSON.parse(data));
+        setClickedJob(data);
       } catch (err) {
         console.log(err);
       }
@@ -37,7 +37,7 @@ export default function BrowseJobs() {
     getAJob();
   };
 
-  const deleteJobHandler = (event) => {
+  const deleteJobHandler = async (event) => {
     const deleteAJob = async () => {
       try {
         await fetch("/jobs", {
@@ -51,9 +51,10 @@ export default function BrowseJobs() {
         console.log(err);
       }
     };
-    deleteAJob();
+    await deleteAJob();
     setClickedJob(null);
-    setDeletedJob(true)
+    setDeletedJob(!deletedJob);
+    //getAllJobs();
   };
 
   const editJobHandler = (event) => {
@@ -65,20 +66,19 @@ export default function BrowseJobs() {
 
   const getAllJobs = () => {
     const fetchData = async () => {
-      console.log("in get all jobs")
+      console.log("in get all jobs");
       const response = await fetch("/jobs");
       const newData = await response.json();
-      console.log("got all jobs")
-      setJobs(JSON.parse(newData));
+      console.log("got all ", newData);
+      setJobs(newData);
     };
     fetchData();
   };
 
   useEffect(() => {
-    console.log("about to execute getAllJobs method")
+    console.log("about to execute getAllJobs method");
     getAllJobs();
     dispatch(submittedFormDataActions.setSubmittedFormData(false));
-    setDeletedJob(false)
   }, [dispatch, formSubmitted, deletedJob]);
 
   return (

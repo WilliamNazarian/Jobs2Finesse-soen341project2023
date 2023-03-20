@@ -16,6 +16,7 @@ export default function EditJob() {
   const [searchParams] = useSearchParams();
   const [editData, setEditData] = useState(null);
   const [checkedArr, setCheckedArr] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const checkboxHandler = (event) => {
     if (checkedArr.find((value) => value === event.target.value)) {
@@ -25,51 +26,52 @@ export default function EditJob() {
     }
   };
 
- 
   const submitEditHandler = async (event) => {
     event.preventDefault();
-    const newArr = [];
+    setLoading(true);
+    /*     const newArr = [];
     for (const job of ["internship", "fullTime", "partTime"]) {
       let count = 0;
       count = editData.jobType.find((value) => value === job) !== undefined ? count + 1 : count;
       count = checkedArr.find((value) => value === job) !== undefined ? count + 1 : count;
       if (count === 1) newArr.push(job);
-    }
-    setCheckedArr(newArr);
+    } */
+    //setCheckedArr([...newArr]);
     const formData = new FormData(event.currentTarget);
-    const myFetch = async() => {
-      try {
-        await fetch("/jobs", {
-          method: "PUT",
-          body: JSON.stringify({
-            _id: searchParams.get("id"),
-            companyName: formData.get("companyName"),
-            numberOfPositions: formData.get("numOfPos"),
-            position: formData.get("position"),
-            country: formData.get("country"),
-            address: formData.get("address"),
-            jobType: newArr,
-            description: formData.get("description"),
-          }),
-          headers: { "Content-Type": "application/json" },
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    myFetch();
-    navigate("/jobs");
+    console.log("here");
+    try {
+      await fetch("/jobs", {
+        method: "PUT",
+        body: JSON.stringify({
+          _id: searchParams.get("id"),
+          companyName: formData.get("companyName"),
+          numberOfPositions: formData.get("numOfPos"),
+          position: formData.get("position"),
+          country: formData.get("country"),
+          address: formData.get("address"),
+          jobType: [],
+          description: formData.get("description"),
+        }),
+        headers: { "Content-Type": "application/json" },
+      }).then(() => {
+        console.log("gfhchfch");
+        navigate("/jobs");
+      });
+    } catch (err) {
+      console.log(err);
+    }
+    setLoading(true);
   };
 
-  const getJob = useCallback(() => {
+  const getJob = () => {
     fetch("/jobs/getAJob?" + new URLSearchParams({ postId: searchParams.get("id") }))
       .then((response) => response.json())
-      .then((data) => setEditData(JSON.parse(data)));
-  }, [searchParams]);
+      .then((data) => setEditData(data));
+  };
 
   useEffect(() => {
     getJob();
-  }, [getJob]);
+  }, []);
 
   return (
     <Box component="form" onSubmit={submitEditHandler} sx={{ px: { lg: 30, md: 10, sm: 7, xs: 4 }, pt: 10 }}>
