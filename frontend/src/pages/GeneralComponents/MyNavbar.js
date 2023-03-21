@@ -48,9 +48,11 @@ function MyNavbar() {
   const [open, setOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  const isAuth = useSelector((state) => state.auth.authenticated);
+  const accountType = useSelector((state) => state.auth.accountType);
   const firstName = useSelector((state) => state.auth.firstName);
   const lastName = useSelector((state) => state.auth.lastName);
+
+  
 
   const closeModalHandler = () => {
     setShowModal(false);
@@ -95,21 +97,30 @@ function MyNavbar() {
 
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, marginRight: "40px" }}>
               <div style={{ marginLeft: "auto" }}>
-                <Button onClick={() => setShowModal(true)} sx={{ color: "white", mr: "20px" }}>
-                  Add A Posting
-                </Button>
-                <Button component={Link} to="/jobs" sx={{ color: "white", mr: "20px" }}>
-                  View Jobs
-                </Button>
+                {accountType === "company" && (
+                  <>
+                    <Button onClick={() => setShowModal(true)} sx={{ color: "white", mr: "20px" }}>
+                      Add A Posting
+                    </Button>
+                    <Button component={Link} to="/jobs" sx={{ color: "white", mr: "20px" }}>
+                      View My Posted Jobs
+                    </Button>
+                  </>
+                )}
+                {accountType !== "company" && (
+                  <Button component={Link} to="/jobs" sx={{ color: "white", mr: "20px" }}>
+                    View Jobs
+                  </Button>
+                )}
               </div>
             </Box>
             <Box sx={{ flexGrow: 0 }}>
-              {!isAuth && (
+              {accountType === "guest" && (
                 <Button component={Link} to={"/login"} variant="contained" size="medium" sx={{ mt: "1.75px", mb: "1.75px", bgcolor: deepPurple[300], "&:hover": { bgcolor: deepPurple[200] } }}>
                   Sign In
                 </Button>
               )}
-              {isAuth && (
+              {accountType !== "guest" && (
                 <>
                   <Tooltip title="Open settings">
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -135,16 +146,27 @@ function MyNavbar() {
         </DrawerHeader>
         <Divider />
         <List>
-          <ListItem disablePadding>
-            <ListItemButton onClick={() => setShowModal(true)}>
-              <ListItemText primary="Add A Posting" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding>
-            <ListItemButton component={Link} to="/jobs">
-              <ListItemText primary="View Jobs" />
-            </ListItemButton>
-          </ListItem>
+          {accountType === "company" && (
+            <>
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => setShowModal(true)}>
+                  <ListItemText primary="Add A Posting" />
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding>
+                <ListItemButton component={Link} to="/jobs">
+                  <ListItemText primary="View My Posted Jobs" />
+                </ListItemButton>
+              </ListItem>
+            </>
+          )}
+          {accountType !== "company" && (
+            <ListItem disablePadding>
+              <ListItemButton component={Link} to="/jobs">
+                <ListItemText primary="View My Posted Jobs" />
+              </ListItemButton>
+            </ListItem>
+          )}
         </List>
       </Drawer>
     </>

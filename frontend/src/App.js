@@ -6,6 +6,7 @@ import SignUp from "./pages/signUp/signUp";
 import BrowseJobs from "./pages/BrowseJobs/BrowseJobs";
 import { deepPurple } from "@mui/material/colors";
 import EditJob from "./pages/EditJobs/EditJob";
+import Apply from "./pages/Apply/Apply";
 //import BrowseJobs from "./pages/BrowseJobs/BrowseJobs";
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/jobs" element={<BrowseJobs />} />
           <Route path="/jobs/edit" element={<EditJob />} />
+          <Route path="/jobs/apply" element={<Apply />} />
         </Routes>
       </div>
     </>

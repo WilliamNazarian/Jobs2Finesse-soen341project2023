@@ -12,6 +12,7 @@ import { useLocation } from "react-router-dom";
 import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { submittedFormDataActions } from "../../store/submittedFormData";
+import { useSelector } from "react-redux";
 
 const styleForFilled = {
   "& div": { bgcolor: lightBlue[200] },
@@ -31,6 +32,9 @@ function FormInsideModal(props) {
   //const navigate = useNavigate()
   const dispatch = useDispatch();
   const location = useLocation();
+  const token = localStorage.getItem("token");
+
+  const userEmail = useSelector((state) => state.auth.email);
 
   const [checkedArr, setCheckedArr] = useState([]);
 
@@ -56,8 +60,9 @@ function FormInsideModal(props) {
             country: countryRef.current.value,
             address: addressRef.current.value,
             jobType: checkedArr,
+            postedBy: userEmail,
           }),
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         });
       } catch (err) {
         console.log(err);

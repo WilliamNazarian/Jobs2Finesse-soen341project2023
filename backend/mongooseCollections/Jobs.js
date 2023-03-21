@@ -10,6 +10,7 @@ const jobSchema = new mongoose.Schema({
   jobType: [String],
   dateCreated: { type: Date, immutable: true, default: () => Date.now() },
   expiryDate: Date,
+  postedBy: String
 });
 
 const Job = mongoose.model("Job", jobSchema);

@@ -1,9 +1,4 @@
 import Box from "@mui/material/Box";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
-import { List } from "@mui/material";
-import { deepPurple } from "@mui/material/colors";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
 import Card from "@mui/material/Card";
@@ -14,15 +9,19 @@ import Button from "@mui/material/Button";
 import { useSelector, useDispatch } from "react-redux";
 import { submittedFormDataActions } from "../../store/submittedFormData";
 import { useEffect, useState } from "react";
+import SideBar from "./ComponentsBrowseJobs/SideBar";
 
 export default function BrowseJobs() {
   const [jobs, setJobs] = useState(null);
   const [clickedJob, setClickedJob] = useState(null);
   const [deletedJob, setDeletedJob] = useState(false);
+  const accountType = useSelector((state) => state.auth.accountType);
+  const email = useSelector((state) => state.auth.email);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const formSubmitted = useSelector((state) => state.submittedFormData.submittedFormData);
+  const token = localStorage.getItem("token");
 
   const jobClickHandler = (event) => {
     const getAJob = async () => {
@@ -37,6 +36,21 @@ export default function BrowseJobs() {
     getAJob();
   };
 
+  const getUsersPostedJobs = async (event) => {
+    try {
+      const response = await fetch("/jobs/getUsersPostedJobs?" + new URLSearchParams({ email: email }), {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      setJobs(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const deleteJobHandler = async (event) => {
     const deleteAJob = async () => {
       try {
@@ -44,6 +58,7 @@ export default function BrowseJobs() {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ id: event.currentTarget.title }),
         });
@@ -54,7 +69,6 @@ export default function BrowseJobs() {
     await deleteAJob();
     setClickedJob(null);
     setDeletedJob(!deletedJob);
-    //getAllJobs();
   };
 
   const editJobHandler = (event) => {
@@ -64,45 +78,36 @@ export default function BrowseJobs() {
     });
   };
 
+  const applyHandler = (event) => {
+    if (accountType !== "student") {
+      window.alert("Create A Student Account To Apply");
+      return
+    }
+    navigate({
+      pathname: "/jobs/apply",
+      search: `?id=${event.currentTarget.title}&company-name=${clickedJob.companyName}&position=${clickedJob.position}`,
+    });
+  };
+
   const getAllJobs = () => {
     const fetchData = async () => {
-      console.log("in get all jobs");
       const response = await fetch("/jobs");
       const newData = await response.json();
-      console.log("got all ", newData);
       setJobs(newData);
     };
     fetchData();
   };
 
   useEffect(() => {
-    console.log("about to execute getAllJobs method");
-    getAllJobs();
+    if (accountType === "company") getUsersPostedJobs();
+    else getAllJobs();
     dispatch(submittedFormDataActions.setSubmittedFormData(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, formSubmitted, deletedJob]);
 
   return (
     <>
-      <Box sx={{ width: "360px", bgcolor: deepPurple[100], position: "fixed", top: "72px", bottom: "0px", overflowY: "scroll" }}>
-        <Box sx={{ textAlign: "center", p: 2, bgcolor: deepPurple[200] }}>
-          <Typography component="p" variant="p" sx={{ fontSize: "1.5rem" }}>
-            Jobs
-          </Typography>
-        </Box>
-        <List>
-          {jobs &&
-            jobs.map((job, num) => (
-              <Box key={job._id}>
-                <ListItem title={job._id} disablePadding onClick={jobClickHandler}>
-                  <ListItemButton>
-                    <ListItemText primary={`${job.companyName}: ${job.position}`} secondary={job.dateCreated} />
-                  </ListItemButton>
-                </ListItem>
-                <hr key={num} />
-              </Box>
-            ))}
-        </List>
-      </Box>
+      <SideBar jobs={jobs} OnJobClick={jobClickHandler} />
       {clickedJob && (
         <Box sx={{ ml: "360px", p: { xs: 1, md: 2, lg: 4 } }}>
           <Card sx={{ width: { xs: "100%", md: "500px", lg: "700px" }, m: "auto" }}>
@@ -125,12 +130,21 @@ export default function BrowseJobs() {
               <Typography variant="body2">{clickedJob.description ? clickedJob.description : "No Description"}</Typography>
             </CardContent>
             <CardActions>
-              <Button title={clickedJob._id} onClick={editJobHandler} variant="contained" color="primary" size="small">
-                Edit
-              </Button>
-              <Button title={clickedJob._id} onClick={deleteJobHandler} variant="contained" color="error" size="small">
-                Remove
-              </Button>
+              {accountType === "company" && (
+                <>
+                  <Button title={clickedJob._id} onClick={editJobHandler} variant="contained" color="primary" size="small">
+                    Edit
+                  </Button>
+                  <Button title={clickedJob._id} onClick={deleteJobHandler} variant="contained" color="error" size="small">
+                    Remove
+                  </Button>
+                </>
+              )}
+              {accountType !== "company" && (
+                <Button title={clickedJob._id} onClick={applyHandler} variant="contained" color="primary" size="medium">
+                  Apply
+                </Button>
+              )}
             </CardActions>
           </Card>
         </Box>

@@ -6,17 +6,17 @@ import Checkbox from "@mui/material/Checkbox";
 import { Button } from "@mui/material";
 import { Box } from "@mui/system";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 export default function EditJob() {
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
   const [searchParams] = useSearchParams();
   const [editData, setEditData] = useState(null);
   const [checkedArr, setCheckedArr] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   const checkboxHandler = (event) => {
     if (checkedArr.find((value) => value === event.target.value)) {
@@ -28,17 +28,15 @@ export default function EditJob() {
 
   const submitEditHandler = async (event) => {
     event.preventDefault();
-    setLoading(true);
-    /*     const newArr = [];
+    const newArr = [];
     for (const job of ["internship", "fullTime", "partTime"]) {
       let count = 0;
       count = editData.jobType.find((value) => value === job) !== undefined ? count + 1 : count;
       count = checkedArr.find((value) => value === job) !== undefined ? count + 1 : count;
       if (count === 1) newArr.push(job);
-    } */
-    //setCheckedArr([...newArr]);
+    }
+    setCheckedArr([...newArr]);
     const formData = new FormData(event.currentTarget);
-    console.log("here");
     try {
       await fetch("/jobs", {
         method: "PUT",
@@ -52,15 +50,13 @@ export default function EditJob() {
           jobType: [],
           description: formData.get("description"),
         }),
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       }).then(() => {
-        console.log("gfhchfch");
         navigate("/jobs");
       });
     } catch (err) {
       console.log(err);
     }
-    setLoading(true);
   };
 
   const getJob = () => {
@@ -71,6 +67,7 @@ export default function EditJob() {
 
   useEffect(() => {
     getJob();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -7,8 +7,13 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import Logo from "../GeneralComponents/Logo.svg"
+import Logo from "../GeneralComponents/Logo.svg";
 import { deepPurple } from "@mui/material/colors";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
 
 import { Link as RouterLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -65,31 +70,30 @@ export default function SignUp() {
 
     const myFetch = async () => {
       try {
-        const response = await fetch("/postuser", {
+        const response = await fetch("/auth/signup", {
           method: "POST",
           body: JSON.stringify({
             firstName: formData.get("firstName"),
             lastName: formData.get("lastName"),
             email: formData.get("email"),
             password: formData.get("password"),
+            accountType: formData.get("accountType"),
           }),
           headers: { "Content-Type": "application/json" },
         });
         const data = await response.json();
-        
-        if (data.emailExists){
+
+        if (data.emailExists) {
           setEmailExists(true);
-        } 
-        else{
+        } else {
           setEmailExists(false);
           navigate("/login");
-        } 
+        }
       } catch (err) {
         console.log(err);
       }
     };
     myFetch();
-    
   };
 
   return (
@@ -103,12 +107,14 @@ export default function SignUp() {
           alignItems: "center",
         }}
       >
-        <RouterLink to="/"><img src={Logo} alt="Logo" width={200} style={{display:"box", margin: "10px 0 30px", padding:"10px", borderRadius:"15px", backgroundColor:deepPurple[100]}}/></RouterLink>
+        <RouterLink to="/">
+          <img src={Logo} alt="Logo" width={200} style={{ display: "box", margin: "10px 0 30px", padding: "10px", borderRadius: "15px", backgroundColor: deepPurple[100] }} />
+        </RouterLink>
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-          <Grid sx={{mb:3}} container spacing={3}>
+          <Grid sx={{ mb: 3 }} container spacing={3}>
             <Grid item xs={12} sm={6}>
               <TextField required name="firstName" fullWidth id="firstName" label="First Name" type="text" error={firstNameErr} helperText={firstNameErr ? "Value Required" : null} />
             </Grid>
@@ -121,12 +127,29 @@ export default function SignUp() {
             <Grid item xs={12}>
               <TextField required fullWidth name="password" label="Password" type="password" id="password" error={passwordErr} helperText={passwordErr ? "Invalid Password" : null} />
             </Grid>
+            <Grid item xs={12}>
+              <FormControl>
+                <FormLabel required id="account-type-label">
+                  Account Type
+                </FormLabel>
+                <RadioGroup aria-labelledby="Account Type Label" name="accountType">
+                  <FormControlLabel value="student" control={<Radio />} label="Student" />
+                  <FormControlLabel value="company" control={<Radio />} label="Company" />
+                </RadioGroup>
+              </FormControl>
+            </Grid>
           </Grid>
-          {emailExists && <Typography sx={{ p: 1, color: "red", textAlign:"center" }}>User Already Exists</Typography>}
+          {emailExists && <Typography sx={{ p: 1, color: "red", textAlign: "center" }}>User Already Exists</Typography>}
           <Button type="submit" fullWidth variant="contained" sx={{ mb: 2 }}>
             Sign Up
           </Button>
-          <Typography sx={{color:"#455a64", fontSize: "12px"}}>Password Requirements:<br/>- At least 8 characters<br/>- Must contain 1 letter<br/>- Must contain 1 number<br/>- Must contain 1 special character</Typography>
+          <Typography sx={{ color: "#455a64", fontSize: "12px" }}>
+            Password Requirements:
+            <br />- At least 8 characters
+            <br />- Must contain 1 letter
+            <br />- Must contain 1 number
+            <br />- Must contain 1 special character
+          </Typography>
           <Grid container justifyContent="flex-end">
             <Grid item>
               <Link component={RouterLink} to="/login" variant="body2">
@@ -134,7 +157,6 @@ export default function SignUp() {
               </Link>
             </Grid>
           </Grid>
-          
         </Box>
       </Box>
       <Copyright sx={{ mt: 5 }} />

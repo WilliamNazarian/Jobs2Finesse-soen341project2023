@@ -41,7 +41,7 @@ export default function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const response = await fetch("/postlogin", {
+    const response = await fetch("/auth/login", {
       method: "POST",
       body: JSON.stringify({
         email: formData.get("email"),
@@ -52,8 +52,8 @@ export default function Login() {
     const data = await response.json();
     setLoginError(data.message);
     if (data.message === "success"){
-      //localStorage.setItem('jwtToken', data.jwtToken);
-      dispatch(authActions.setCredential({firstName: data.firstName, lastName: data.lastName, email: data.email}))
+      localStorage.setItem('token', data.token);
+      dispatch(authActions.setCredential({firstName: data.firstName, lastName: data.lastName, email: data.email, accountType: data.accountType, token: data.token}))
       navigate("/");
     } 
   };
