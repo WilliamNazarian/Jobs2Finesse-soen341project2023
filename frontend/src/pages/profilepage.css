@@ -1,0 +1,57 @@
+.center-text {
+    text-align: center;
+  }
+  .center-div {
+    display: table;
+    margin: 0 auto;
+  }
+  body {
+    background-color: #ccddff;
+    padding-left: 10em;
+    padding-right: 10em;
+    padding-top: 5em;
+  }
+  .required:before {
+    color: #f00;
+    content: "*";
+  }
+  button {
+      background-color: #909690;
+      border: solid;
+      border-color: rgb(59, 59, 70);
+      color: white;
+      padding: 1em 2em;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 0.8em;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 10%;
+  }
+  .required {
+      text-emphasis: bold;
+  }
+
+
+
+#profileImage
+{
+    cursor: pointer;
+}
+
+#profile-container {
+    width: 150px;
+    height: 150px;
+    overflow: hidden;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    -o-border-radius: 50%;
+    border-radius: 50%;
+}
+
+#profile-container img {
+    width: 150px;
+    height: 150px;
+}
