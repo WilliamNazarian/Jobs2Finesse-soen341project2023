@@ -81,7 +81,7 @@ export default function BrowseJobs() {
   const applyHandler = (event) => {
     if (accountType !== "student") {
       window.alert("Create A Student Account To Apply");
-      return
+      return;
     }
     navigate({
       pathname: "/jobs/apply",
@@ -129,14 +129,17 @@ export default function BrowseJobs() {
               </Typography>
               <Typography variant="body2">{clickedJob.description ? clickedJob.description : "No Description"}</Typography>
             </CardContent>
-            <CardActions>
+            <CardActions disableSpacing>
               {accountType === "company" && (
                 <>
                   <Button title={clickedJob._id} onClick={editJobHandler} variant="contained" color="primary" size="small">
                     Edit
                   </Button>
-                  <Button title={clickedJob._id} onClick={deleteJobHandler} variant="contained" color="error" size="small">
+                  <Button title={clickedJob._id} sx={{ ml: "10px" }} onClick={deleteJobHandler} variant="contained" color="error" size="small">
                     Remove
+                  </Button>
+                  <Button title={clickedJob._id} sx={{ ml: "auto" }} variant="contained" color="success" size="small" onClick={(event) => navigate({ pathname: "/jobs/applications", search: `?jobId=${event.currentTarget.title}` })}>
+                    View Applications
                   </Button>
                 </>
               )}

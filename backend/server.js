@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 
 const jobsRoutes = require("./routes/jobsRoutes")
 const authRoutes = require("./routes/authRoutes")
+const applicationRoutes = require("./routes/applicationRoutes")
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -19,6 +20,7 @@ async function main() {
 
 app.use("/jobs", jobsRoutes)
 app.use("/auth", authRoutes)
+app.use("/application", applicationRoutes)
 
 
 
