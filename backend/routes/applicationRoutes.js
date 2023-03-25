@@ -3,7 +3,8 @@ const router = express.Router();
 const User = require("../mongooseCollections/User");
 const verifyJWT = require("../middleware/verifyJWT");
 const upload = require("../middleware/multerUpload");
-const path = require('path');
+const path = require("path");
+const mongoose = require("mongoose");
 
 router.post("/", verifyJWT, upload.single("CV"), async (req, res) => {
   if (req.user.accountType !== "student") return res.json({ message: "unauthorized User" });
@@ -31,33 +32,41 @@ router.get("/", verifyJWT, async (req, res) => {
   const jobId = req.query.jobId;
 
   try {
-    const studentsWithAllJobs = await User.find( { "appliedJobs.job": jobId } );
-    
-    const students = studentsWithAllJobs.map((student) => {
-      
-      const job = student.appliedJobs.find((appliedJob)=> appliedJob.job.toString()===jobId.toString())
-      student.appliedJobs = job
-      return student
-    });
-    
+    const students = await User.aggregate([
+      { $match: { "appliedJobs.job": mongoose.Types.ObjectId(jobId) } },
+      { $unwind: "$appliedJobs" },
+      { $match: { "appliedJobs.job": mongoose.Types.ObjectId(jobId) } },
+      {
+        $lookup: {
+          from: "jobs",
+          localField: "appliedJobs.job",
+          foreignField: "_id",
+          as: "appliedJobs.job",
+        },
+      },
+      { $unwind: "$appliedJobs.job" },
+      {
+        $project: {
+          password: 0,
+        },
+      },
+    ]);
+
     if (students.length === 0) return res.status(200).json({ students: [], message: "No Applications Are Submitted Yet" });
-    return res.status(200).json({ students:students });
+    return res.status(200).json({ students: students });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Failed to fetch applied student" });
   }
 });
 
-
-router.get('/download/CVs/:filename', (req, res) => {
-  console.log("here")
+router.get("/download/CVs/:filename", (req, res) => {
   const filename = req.params.filename;
-  const filePath = path.join(__dirname,"..", 'CVs', filename);
-  console.log(filePath)
+  const filePath = path.join(__dirname, "..", "CVs", filename);
   res.download(filePath, (err) => {
     if (err) {
       console.error(err);
-      res.status(500).json({ error: 'Failed to download the file' });
+      res.status(500).json({ error: "Failed to download the file" });
     }
   });
 });
