@@ -3,7 +3,7 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
+//import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
@@ -19,6 +19,10 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
+import { ListItemIcon } from "@mui/material";
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import LogoutIcon from '@mui/icons-material/Logout';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { deepPurple } from "@mui/material/colors";
 
 import { Link } from "react-router-dom";
@@ -26,6 +30,7 @@ import { useState } from "react";
 import MyModal from "./MyModal";
 import Logo from "./Logo.svg";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -35,7 +40,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
 //
 //
 //
@@ -47,12 +51,11 @@ function MyNavbar() {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [open, setOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate()
 
   const accountType = useSelector((state) => state.auth.accountType);
   const firstName = useSelector((state) => state.auth.firstName);
   const lastName = useSelector((state) => state.auth.lastName);
-
-  
 
   const closeModalHandler = () => {
     setShowModal(false);
@@ -127,12 +130,26 @@ function MyNavbar() {
                       <Avatar sx={{ bgcolor: deepPurple[200], "&:hover": { bgcolor: deepPurple[100] } }}>{`${firstName.charAt(0)}${lastName.charAt(0)}`}</Avatar>
                     </IconButton>
                   </Tooltip>
-                  <Menu sx={{ mt: "45px" }} id="menu-appbar" anchorEl={anchorElUser} anchorOrigin={{ vertical: "top", horizontal: "right" }} keepMounted transformOrigin={{ vertical: "top", horizontal: "right" }} open={Boolean(anchorElUser)} onClose={handleCloseUserMenu}>
-                    {settings.map((setting) => (
-                      <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                        <Typography textAlign="center">{setting}</Typography>
-                      </MenuItem>
-                    ))}
+                  <Menu sx={{ mt: "45px" }} id="account-menu"  PaperProps={{  sx: { overflow: 'visible',  mt: 1, '& .MuiAvatar-root': { width: 32, height: 32, ml: -0.5, mr: 1, }, '&:before': { content: '""', display: 'block', position: 'absolute', top: 0, right: 14, width: 10, height: 10, bgcolor: 'background.paper', transform: 'translateY(-50%) rotate(45deg)', zIndex: 0, }, }, }} anchorEl={anchorElUser} anchorOrigin={{ vertical: "top", horizontal: "right" }} keepMounted transformOrigin={{ vertical: "top", horizontal: "right" }} open={Boolean(anchorElUser)} onClose={handleCloseUserMenu}>
+                    <MenuItem onClick={()=>navigate("/student-profile/view")}>
+                      <ListItemIcon>
+                        <AccountCircleIcon fontSize="small" />
+                      </ListItemIcon>
+                      View Profile
+                    </MenuItem>
+                    <MenuItem onClick={()=>navigate("/student-profile/edit")}>
+                      <ListItemIcon>
+                        <ModeEditIcon fontSize="small" />
+                      </ListItemIcon>
+                      Edit Profile
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem >
+                      <ListItemIcon>
+                        <LogoutIcon fontSize="small" />
+                      </ListItemIcon>
+                      Logout
+                    </MenuItem>
                   </Menu>
                 </>
               )}

@@ -1,9 +1,18 @@
 import { Route, Navigate } from "react-router-dom";
-import GetAccountType from "../Hooks/Functions/GetAccountType";
+import useAuth from "./useAuth";
 
-function ProtectedCompanyRoute({ component: Component, ...rest }){
-  const accountType = GetAccountType()
-  return <Route {...rest} element={accountType === "company" ? <Component /> : <Navigate to="/" />} />;
+const ProtectedRoute = ({ element, ...rest }) => {
+  const { isAuthenticated, accountType } = useAuth();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+
+  if (accountType !== "company") {
+    return <Navigate to="/unauthorized" />;
+  }
+
+  return <Route {...rest} element={element} />;
 };
 
-export default ProtectedCompanyRoute;
+export default ProtectedRoute;

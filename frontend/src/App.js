@@ -8,13 +8,16 @@ import { deepPurple } from "@mui/material/colors";
 import EditJob from "./pages/EditJobs/EditJob";
 import Apply from "./pages/Apply/Apply";
 import Applications from "./pages/Applications/Applications";
-//import BrowseJobs from "./pages/BrowseJobs/BrowseJobs";
+import ViewProfile from "./pages/studentProfileView/ViewProfile";
+import EditProfile from "./pages/studentProfileEdit/EditProfile";
+//import ProtectedRoute from "./components/ProtectedRoute";
+//<ProtectedRoute path="/dashboard" element={<Dashboard />} />
 
 function App() {
   const location = useLocation();
   return (
     <>
-      <div style={{ backgroundColor: deepPurple[50], minHeight:"100vh", height:"100%" }}>
+      <div style={{ backgroundColor: deepPurple[50], minHeight: "100vh", height: "100%" }}>
         {location.pathname !== "/login" && location.pathname !== "/signup" && <MyNavbar />}
         <Routes>
           <Route path="/" element={<Home />} />
@@ -24,6 +27,8 @@ function App() {
           <Route path="/jobs/edit" element={<EditJob />} />
           <Route path="/jobs/apply" element={<Apply />} />
           <Route path="/jobs/applications" element={<Applications />} />
+          <Route path="/student-profile/view" element={<ViewProfile />} />
+          <Route path="/student-profile/edit" element={<EditProfile />} />
         </Routes>
       </div>
     </>

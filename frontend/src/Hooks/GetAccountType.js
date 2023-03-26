@@ -1,31 +1,37 @@
 import { useState, useEffect } from "react";
 
-const GetAccountType = () => {
-  const [accountType, setAccountType] = useState(false);
+const useAuth = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [accountType, setAccountType] = useState(null);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem("token");
-      if (token) {
-        try {
-          const response = await fetch("/auth/checkAccountType", {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          const data = await response.json();
-          setAccountType(data.accountType);
-        } catch (error) {
-          console.error(error);
+    const checkIfCompany = async () => {
+      try {
+        const response = await fetch("/checkIfCompany", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        if (data.message === "success") {
+          setIsAuthenticated(true);
+          setAccountType("company");
+        } else {
+          setIsAuthenticated(false);
+          setAccountType("student");
         }
+      } catch (err) {
+        console.log(err);
       }
     };
 
-    fetchData();
-  }, []);
+    if (token) {
+      checkIfCompany();
+    }
+  }, [token]);
 
-  return accountType;
+  return { isAuthenticated, accountType };
 };
 
-export default GetAccountType;
+export default useAuth;

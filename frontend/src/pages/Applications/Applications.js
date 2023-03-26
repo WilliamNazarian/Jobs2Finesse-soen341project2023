@@ -44,7 +44,7 @@ function Applications() {
   const rejectionEmail = (application) => {
     const subject = encodeURIComponent("Job Application Rejection");
     const body = encodeURIComponent(`Dear ${application.firstName} ${application.lastName},\n\nWe appreciate your interest in our company and hope you can consider applying at ${application.appliedJobs.job.companyName} again in the future. However, for now, we have moved on with other applicants who are more qualified for the job.\n\nBest regards.`);
-    window.open(`mailto:oananutu@yahoo.com?subject=${subject}&body=${body}`);
+    window.open(`mailto:${application.email}?subject=${subject}&body=${body}`);
   };
 
   return (

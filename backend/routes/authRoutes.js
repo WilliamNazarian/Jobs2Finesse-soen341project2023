@@ -47,9 +47,24 @@ router.post("/login", async (req, res) => {
   } else return res.json({ message: "Incorrect Password" });
 });
 
-router.get("/checkAccountType", verifyJWT, (req, res) => {
+router.get("/checkIfCompany", verifyJWT, (req, res) => {
   const user = req.user;
-  res.json({ accountType: user.accountType });
+  if (user.accountType === "company") res.json({ message: "success" });
+  else res.json({ message: "error" });
+});
+
+router.put("/editUserInfo", verifyJWT, async (req, res) => {
+  try {
+    const account = await User.findById(req.user._id);
+    const { firstName, lastName, email, oldPassword, newPassword } = req.body;
+    if (!(await bcrypt.compare(oldPassword, account.password))) return res.json({ message: "Incorrect" });
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await account?.updateOne({ firstName: firstName, lastName: lastName, email: email, password: hashedPassword });
+    return res.json({ message: "success" });
+  } catch (e) {
+    console.log(e);
+    return res.json({ message: e });
+  }
 });
 
 module.exports = router;

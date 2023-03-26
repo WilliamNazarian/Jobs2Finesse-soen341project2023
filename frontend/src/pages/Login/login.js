@@ -53,7 +53,7 @@ export default function Login() {
     setLoginError(data.message);
     if (data.message === "success"){
       localStorage.setItem('token', data.token);
-      dispatch(authActions.setCredential({firstName: data.firstName, lastName: data.lastName, email: data.email, accountType: data.accountType, token: data.token}))
+      dispatch(authActions.setCredential({firstName: data.firstName, lastName: data.lastName, email: data.email, accountType: data.accountType}))
       navigate("/");
     } 
   };
