@@ -10,11 +10,37 @@ import Apply from "./pages/Apply/Apply";
 import Applications from "./pages/Applications/Applications";
 import ViewProfile from "./pages/studentProfileView/ViewProfile";
 import EditProfile from "./pages/studentProfileEdit/EditProfile";
+import { useDispatch } from "react-redux";
+import { authActions } from "./store/auth";
+import jwt_decode from "jwt-decode"
+import { useEffect } from "react";
 //import ProtectedRoute from "./components/ProtectedRoute";
 //<ProtectedRoute path="/dashboard" element={<Dashboard />} />
 
 function App() {
   const location = useLocation();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decoded = jwt_decode(token);
+        const user = {
+          firstName: decoded.firstName,
+          lastName: decoded.lastName,
+          email: decoded.email,
+          accountType: decoded.accountType,
+        };
+        dispatch(authActions.setCredential(user));
+      } catch (error) {
+        console.error("Error decoding JWT token:", error);
+      }
+    }
+  }, [dispatch]);
+  //put it in useeffect so it only works when page is reloaded
+
+
   return (
     <>
       <div style={{ backgroundColor: deepPurple[50], minHeight: "100vh", height: "100%" }}>

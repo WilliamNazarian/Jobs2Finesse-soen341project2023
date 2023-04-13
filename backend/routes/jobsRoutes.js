@@ -4,6 +4,7 @@ const Job = require("../mongooseCollections/Jobs");
 const User = require("../mongooseCollections/User");
 const verifyJWT = require("../middleware/verifyJWT");
 const upload = require("../middleware/multerUpload");
+const deleteJobMiddleware = require("../middleware/deleteJob");
 
 router.get("/getAJob", async (req, res) => {
   try {
@@ -46,7 +47,7 @@ router.post("/", verifyJWT, async (req, res) => {
   }
 });
 
-router.delete("/", verifyJWT, async (req, res) => {
+router.delete("/", verifyJWT, deleteJobMiddleware, async (req, res) => {
   if (req.user.accountType !== "company") return res.json({ message: "unauthorized User" });
   try {
     await Job.deleteOne({ _id: req.body.id });

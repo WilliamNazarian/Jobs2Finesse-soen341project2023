@@ -42,7 +42,7 @@ router.post("/login", async (req, res) => {
       email: user.email,
       accountType: user.accountType,
     };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "2h" });
+    const token = jwt.sign(payload, process.env.JWT_SECRET);
     return res.json({ message: "success", firstName: user.firstName, lastName: user.lastName, email: user.email, accountType: user.accountType, token: token });
   } else return res.json({ message: "Incorrect Password" });
 });

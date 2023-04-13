@@ -31,6 +31,8 @@ import MyModal from "./MyModal";
 import Logo from "./Logo.svg";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../store/auth";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -47,6 +49,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 //
 function MyNavbar() {
   const theme = useTheme();
+  const dispatch = useDispatch();
 
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [open, setOpen] = useState(false);
@@ -75,6 +78,13 @@ function MyNavbar() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    dispatch(authActions.logout());
+    handleCloseUserMenu();
+    navigate('/login');
   };
 
   return (
@@ -144,7 +154,7 @@ function MyNavbar() {
                       Edit Profile
                     </MenuItem>
                     <Divider />
-                    <MenuItem >
+                    <MenuItem onClick={handleLogout} >
                       <ListItemIcon>
                         <LogoutIcon fontSize="small" />
                       </ListItemIcon>
