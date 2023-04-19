@@ -5,43 +5,54 @@ import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import Stack from "@mui/material/Stack";
 
+//importing hooks 
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 
+//define function apply
 function Apply() {
+  //setting initial state
   const [file, setFile] = useState(null);
   const [coverLetter, setCoverLetter] = useState("");
   const [applied, setApplied] = useState(false);
 
+  //retrieve search param and token from local storage
   const [searchParams] = useSearchParams();
   const token = localStorage.getItem("token");
   const navigate = useNavigate()
 
+  //function to handle file upload
   const handleFileUpload = (event) => {
     console.log(event.target.files[0]);
     setFile(event.target.files[0]);
   };
 
+  //function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    //create new instances of FormData 
     const formData = new FormData();
     formData.append("CV", file);
     formData.append("coverLetter", coverLetter);
     formData.append("jobId", searchParams.get("id"));
 
     try {
+      //making POST request to server with form data and token
       const response = await fetch("/application", {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
 
+      //check if response is Ok
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+      //extract data from response and logging it to the console 
       const data = await response.json();
       console.log(data);
+      //setting applied to true and redirecting to jobs page
       setApplied(true);
 
       setTimeout(() => {
