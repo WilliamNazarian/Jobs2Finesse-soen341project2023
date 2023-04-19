@@ -1,5 +1,6 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import Apply from "./Apply";
 
 // Mock dependencies
@@ -9,60 +10,67 @@ jest.mock("react-router-dom", () => ({
     get: jest.fn(),
   })),
 }));
-global.localStorage = {
-  getItem: jest.fn(),
-};
+const mockFetch = jest.fn();
+global.fetch = mockFetch;
 
 describe("Apply component", () => {
   beforeEach(() => {
-    // Clear mock function calls and reset component state before each test
+    // Reset mock functions and render component
     jest.clearAllMocks();
-    jest.restoreAllMocks();
+    render(<Apply />);
   });
 
-  test("renders component correctly", () => {
-    render(<Apply />);
-
-    // Assert that relevant elements are rendered
+  it("renders the component", () => {
     expect(screen.getByText("Upload CV")).toBeInTheDocument();
     expect(screen.getByLabelText("Cover Letter")).toBeInTheDocument();
     expect(screen.getByText("Submit")).toBeInTheDocument();
   });
 
-  test("handles file upload correctly", async () => {
-    const file = new File([""], "cv.pdf", { type: "application/pdf" });
-    const handleFileUploadMock = jest.fn();
-    jest.spyOn(React, "useState").mockImplementation(() => [null, handleFileUploadMock]);
+  it("uploads a file when CV is selected", async () => {
+    // Mock file and handleFileUpload function
+    const file = new File(["test file"], "test.pdf", { type: "application/pdf" });
+    const handleFileUpload = jest.fn();
+    const inputElement = screen.getByLabelText("Upload CV");
 
-    render(<Apply />);
+    // Upload file
+    fireEvent.change(inputElement, { target: { files: [file] } });
 
-    const fileInput = screen.getByLabelText("Upload CV");
-
-    fireEvent.change(fileInput, { target: { files: [file] } });
-
-    // Assert that file is set in component state
-    expect(handleFileUploadMock).toHaveBeenCalledTimes(1);
-    expect(handleFileUploadMock).toHaveBeenCalledWith(file);
+    // Assert file is uploaded and handleFileUpload is called
+    expect(screen.getByText(file.name)).toBeInTheDocument();
+    expect(handleFileUpload).toHaveBeenCalledWith(expect.objectContaining({ target: { files: [file] } }));
   });
 
-  test("handles form submission correctly", async () => {
+  it("submits form with correct data", async () => {
+    // Mock form data and fetch response
+    const file = new File(["test file"], "test.pdf", { type: "application/pdf" });
+    const coverLetter = "This is a cover letter";
+    const jobId = "jobId123";
+    const formData = new FormData();
+    formData.append("CV", file);
+    formData.append("coverLetter", coverLetter);
+    formData.append("jobId", jobId);
     const mockResponse = { ok: true, json: jest.fn() };
-    jest.spyOn(global, "fetch").mockResolvedValue(mockResponse);
-    jest.spyOn(console, "log").mockImplementation(() => {});
+    mockFetch.mockResolvedValue(mockResponse);
 
-    const handleSubmitMock = jest.fn();
-    jest.spyOn(React, "useState").mockImplementation(() => [null, jest.fn(), jest.fn(), handleSubmitMock]);
+    // Fill and submit form
+    userEvent.upload(screen.getByLabelText("Upload CV"), file);
+    fireEvent.change(screen.getByLabelText("Cover Letter"), { target: { value: coverLetter } });
+    fireEvent.click(screen.getByText("Submit"));
 
-    render(<Apply />);
+    // Assert fetch is called with correct data
+    expect(mockFetch).toHaveBeenCalledWith("/application", expect.objectContaining({ body: formData }));
+    await screen.findByText("You successfully applied to this job");
+  });
 
-    const submitButton = screen.getByText("Submit");
+  it("handles form submission error", async () => {
+    // Mock fetch response with error
+    const mockResponse = { ok: false, status: 500 };
+    mockFetch.mockResolvedValue(mockResponse);
 
-    fireEvent.click(submitButton);
+    // Submit form
+    fireEvent.click(screen.getByText("Submit"));
 
-    // Assert that form submission is handled correctly
-    expect(handleSubmitMock).toHaveBeenCalledTimes(1);
-    expect(mockResponse.json).toHaveBeenCalledTimes(1);
-    expect(mockResponse.json).toHaveBeenCalledWith();
-    await waitFor(() => expect(screen.getByText("You successfully applied to this job")).toBeInTheDocument());
+    // Assert error is logged
+    expect(console.log).toHaveBeenCalledWith(expect.any(Error));
   });
 });
