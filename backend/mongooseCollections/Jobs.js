@@ -5,6 +5,7 @@
 const mongoose = require("mongoose");
 
 const jobSchema = new mongoose.Schema({
+  // Defining the offer parameters
   companyName: String, // String is shorthand for {type: String}
   numberOfPositions: Number,
   position: String,
