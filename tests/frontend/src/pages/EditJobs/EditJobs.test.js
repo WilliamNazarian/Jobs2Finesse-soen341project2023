@@ -1,86 +1,86 @@
-import React from "react";
-import { render, fireEvent, waitFor } from "@testing-library/react";
-import BrowseJobs from "./BrowseJobs";
-import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-//Written using JEST
-// Mocking the useSelector, useDispatch, and useNavigate hooks
-jest.mock("react-redux", () => ({
-  useSelector: jest.fn(),
-  useDispatch: jest.fn(),
-}));
-jest.mock("react-router-dom", () => ({
-  useNavigate: jest.fn(),
-}));
+import { render, screen, fireEvent } from "@testing-library/react";
+import EditJob from "./EditJob";
 
-describe("BrowseJobs", () => {
-  beforeEach(() => {
-    // Reset the mock function calls before each test
-    useSelector.mockClear();
-    useDispatch.mockClear();
-    useNavigate.mockClear();
-  });
+describe("EditJob", () => {
+  test("renders form with correct initial values", () => {
+    // Mocking localStorage.getItem
+    const localStorageMock = {
+      getItem: jest.fn(() => "token"),
+    };
+    Object.defineProperty(window, "localStorage", { value: localStorageMock });
 
-  test("renders BrowseJobs component correctly", () => {
-    // Mock the useSelector hook
-    useSelector.mockReturnValueOnce("student"); // Mock the accountType
-    useSelector.mockReturnValueOnce("test@example.com"); // Mock the email
-    useSelector.mockReturnValueOnce(null); // Mock the formSubmitted
-    useSelector.mockReturnValueOnce(null); // Mock the jobs
-
-    // Mock the useDispatch hook
-    const mockDispatch = jest.fn();
-    useDispatch.mockReturnValueOnce(mockDispatch);
-
-    // Mock the useNavigate hook
-    const mockNavigate = jest.fn();
-    useNavigate.mockReturnValueOnce(mockNavigate);
-
-    // Render the BrowseJobs component
-    const { getByText } = render(<BrowseJobs />);
-
-    // Assert that the component renders correctly
-    expect(getByText("No Description")).toBeInTheDocument();
-  });
-
-  test("jobClickHandler function fetches job details correctly", async () => {
-    // Mock the fetch function
-    const mockFetch = jest.fn(() => {
-      return Promise.resolve({
+    // Mocking fetch for getJob request
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
         json: () =>
           Promise.resolve({
+            _id: "1",
             companyName: "Test Company",
             numberOfPositions: 5,
-            position: "Test Position",
-            country: "Test Country",
-            address: "Test Address",
-            description: "Test Description",
+            position: "Software Developer",
+            country: "USA",
+            address: "123 Main St",
+            jobType: ["fullTime", "internship"],
+            description: "Job description",
           }),
-      });
-    });
-    global.fetch = mockFetch;
+      })
+    );
 
-    // Mock the useState and useEffect hooks
-    const setState = jest.fn();
-    const useStateSpy = jest.spyOn(React, "useState");
-    useStateSpy.mockImplementationOnce(() => [null, setState]);
-    useStateSpy.mockImplementationOnce(() => [null, setState]);
+    render(<EditJob />);
 
-    // Render the BrowseJobs component
-    const { getByText } = render(<BrowseJobs />);
-
-    // Call the jobClickHandler function
-    fireEvent.click(getByText("Edit"));
-    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1));
-
-    // Assert that the job details are fetched correctly
-    expect(getByText("Test Company")).toBeInTheDocument();
-    expect(getByText("5")).toBeInTheDocument();
-    expect(getByText("Test Position")).toBeInTheDocument();
-    expect(getByText("Test Country")).toBeInTheDocument();
-    expect(getByText("Test Address")).toBeInTheDocument();
-    expect(getByText("Test Description")).toBeInTheDocument();
+    // Asserting form fields have correct initial values
+    expect(screen.getByLabelText(/company name/i)).toHaveValue("Test Company");
+    expect(screen.getByLabelText(/number of positions/i)).toHaveValue("5");
+    expect(screen.getByLabelText(/position offered/i)).toHaveValue("Software Developer");
+    expect(screen.getByLabelText(/country/i)).toHaveValue("USA");
+    expect(screen.getByLabelText(/address/i)).toHaveValue("123 Main St");
+    expect(screen.getByLabelText(/job descripton/i)).toHaveValue("Job description");
+    expect(screen.getByLabelText(/full time/i)).toBeChecked();
+    expect(screen.getByLabelText(/part time/i)).not.toBeChecked();
+    expect(screen.getByLabelText(/internship/i)).toBeChecked();
   });
 
-  // Write more test cases for other functions in the BrowseJobs component
+  test("form submission", async () => {
+    // Mocking localStorage.getItem
+    const localStorageMock = {
+      getItem: jest.fn(() => "token"),
+    };
+    Object.defineProperty(window, "localStorage", { value: localStorageMock });
+
+    // Mocking fetch for getJob request
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        json: () =>
+          Promise.resolve({
+            _id: "1",
+            companyName: "Test Company",
+            numberOfPositions: 5,
+            position: "Software Developer",
+            country: "USA",
+            address: "123 Main St",
+            jobType: ["fullTime", "internship"],
+            description: "Job description",
+          }),
+      })
+    );
+
+    // Mocking fetch for submitEditHandler request
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        then: () => ({ navigate: jest.fn() }),
+      })
+    );
+
+    render(<EditJob />);
+
+    // Submitting form
+    fireEvent.submit(screen.getByTestId("edit-job-form"));
+
+    // Asserting that fetch was called with correct arguments
+    expect(global.fetch).toHaveBeenCalledWith("/jobs", {
+      method: "PUT",
+      body: expect.anything(),
+      headers: { "Content-Type": "application/json", Authorization: "Bearer token" },
+    });
+  });
 });
