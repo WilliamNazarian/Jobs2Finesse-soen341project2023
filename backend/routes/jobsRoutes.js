@@ -1,3 +1,5 @@
+// Setting up the necessary modules and middleware functions for defining routes and handling incoming HTTP requests in a Node.js application that works 
+// with job listings and user data in a MongoDB database.
 const express = require("express");
 const router = express.Router();
 const Job = require("../mongooseCollections/Jobs");
@@ -6,6 +8,8 @@ const verifyJWT = require("../middleware/verifyJWT");
 const upload = require("../middleware/multerUpload");
 const deleteJobMiddleware = require("../middleware/deleteJob");
 
+// Allows a client to retrieve a single job listing from the MongoDB database by making a GET request to the "/getAJob" endpoint
+// with the ID of the job listing specified in the query string.
 router.get("/getAJob", async (req, res) => {
   try {
     const jsonJobs = await Job.findById(req.query.postId);
@@ -24,6 +28,9 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Allows a company user to retrieve all job listings that they have posted by making a GET request to the "/getUsersPostedJobs" endpoint and including their email 
+// address as a query parameter in the request URL. The JWT included in the request header is used to verify the user's identity and ensure that only company users can retrieve 
+// their own job listings.
 router.get("/getUsersPostedJobs", verifyJWT, async (req, res) => {
   if (req.user.accountType !== "company") return res.json({ message: "unauthorized User" });
   try {
@@ -36,6 +43,8 @@ router.get("/getUsersPostedJobs", verifyJWT, async (req, res) => {
   }
 });
 
+// Allows a company user to create a new job listing by making a POST request to the "/" endpoint and including the necessary job data in the request body.
+// The JWT included in the request header is used to verify the user's identity and ensure that only company users can create job listings.
 router.post("/", verifyJWT, async (req, res) => {
   if (req.user.accountType !== "company") return res.json({ message: "unauthorized User" });
   try {
@@ -47,6 +56,9 @@ router.post("/", verifyJWT, async (req, res) => {
   }
 });
 
+// Delete a job listing that they have posted by making a DELETE request to the root endpoint ("/") and including the ID of the job listing in
+// the id property of the request body. The JWT included in the request header is used to verify the user's identity and ensure that only company users 
+// can delete their own job listings. The custom middleware function deleteJobMiddleware ensures that the job listing being deleted belongs to the authenticated user.
 router.delete("/", verifyJWT, deleteJobMiddleware, async (req, res) => {
   if (req.user.accountType !== "company") return res.json({ message: "unauthorized User" });
   try {
@@ -70,6 +82,8 @@ router.put("/", verifyJWT, async (req, res) => {
   }
 });
 
+// This is an API endpoint for applying to a job. The endpoint expects a POST request with the following data in the request body (jobID and coverletter).
+// The endpoint expects a file with the key "CV" in the request body, which is uploaded using the multer middleware. 
 router.post("/applied", verifyJWT, upload.single("CV"), async (req, res) => {
   if (req.user.accountType !== "student") return res.json({ message: "unauthorized User" });
 
