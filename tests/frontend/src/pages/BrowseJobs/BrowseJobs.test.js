@@ -81,6 +81,4 @@ describe("BrowseJobs", () => {
     expect(getByText("Test Address")).toBeInTheDocument();
     expect(getByText("Test Description")).toBeInTheDocument();
   });
-
-  // Write more test cases for other functions in the BrowseJobs component
 });
