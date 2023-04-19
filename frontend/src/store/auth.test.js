@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer, { authActions } from "./authSlice";
-//test file for auth.js
+//test file for auth.js using Jest. 
 
 describe("authSlice", () => {
   let store;
