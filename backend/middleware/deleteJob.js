@@ -1,3 +1,4 @@
+// Loading the modules and JavaScript files into the Node.js
 const fs = require("fs");
 const User = require("../mongooseCollections/User");
 
@@ -29,4 +30,5 @@ const deleteJobMiddleware = async (req, res, next) => {
   next();
 };
 
+// Object that determines what code should be exported from the module. The code inside this module is not automatically available to other parts of our website, so we need to explicitly export it using export.
 module.exports = deleteJobMiddleware;
