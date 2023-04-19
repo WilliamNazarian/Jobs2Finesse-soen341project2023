@@ -1,3 +1,7 @@
+
+// defines a Mongoose schema and model for a job posting, 
+// which can be used to create, retrieve, update, and delete job postings in a MongoDB database.
+
 const mongoose = require("mongoose");
 
 const jobSchema = new mongoose.Schema({
