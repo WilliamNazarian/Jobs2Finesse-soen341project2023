@@ -1,85 +1,87 @@
 import React from "react";
-import { render, fireEvent, waitFor } from "@testing-library/react";
-import BrowseJobs from "./BrowseJobs";
+import { render, fireEvent, screen } from "@testing-library/react";
+import { Provider } from "react-redux";
+import { createStore } from "redux";
+import FormInsideModal from "./FormInsideModal";
+import { submittedFormDataActions } from "../../store/submittedFormData";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
-// Mocking the useSelector, useDispatch, and useNavigate hooks
+// Mock Redux store
+const store = createStore(() => ({}));
+
+// Mock useDispatch hook
 jest.mock("react-redux", () => ({
-  useSelector: jest.fn(),
   useDispatch: jest.fn(),
+  useSelector: jest.fn(),
 }));
+
+// Mock useLocation hook
 jest.mock("react-router-dom", () => ({
-  useNavigate: jest.fn(),
+  useLocation: jest.fn(),
 }));
 
-describe("BrowseJobs", () => {
+describe("FormInsideModal", () => {
   beforeEach(() => {
-    // Reset the mock function calls before each test
-    useSelector.mockClear();
-    useDispatch.mockClear();
-    useNavigate.mockClear();
+    useDispatch.mockReturnValue(jest.fn());
+    useSelector.mockReturnValue("");
+    useLocation.mockReturnValue({ pathname: "/jobs" });
   });
 
-  test("renders BrowseJobs component correctly", () => {
-    // Mock the useSelector hook
-    useSelector.mockReturnValueOnce("student"); // Mock the accountType
-    useSelector.mockReturnValueOnce("test@example.com"); // Mock the email
-    useSelector.mockReturnValueOnce(null); // Mock the formSubmitted
-    useSelector.mockReturnValueOnce(null); // Mock the jobs
+  test("renders form with input fields and submit button", () => {
+    render(
+      <Provider store={store}>
+        <FormInsideModal onSubmitForm={() => {}} />
+      </Provider>
+    );
 
-    // Mock the useDispatch hook
-    const mockDispatch = jest.fn();
-    useDispatch.mockReturnValueOnce(mockDispatch);
+    // Check if form fields are rendered
+    expect(screen.getByLabelText("Company Name")).toBeInTheDocument();
+    expect(screen.getByLabelText("Number Of Positions")).toBeInTheDocument();
+    expect(screen.getByLabelText("Postion Offered")).toBeInTheDocument();
+    expect(screen.getByLabelText("Country")).toBeInTheDocument();
+    expect(screen.getByLabelText("Address")).toBeInTheDocument();
+    expect(screen.getByLabelText("Job Descripton")).toBeInTheDocument();
 
-    // Mock the useNavigate hook
-    const mockNavigate = jest.fn();
-    useNavigate.mockReturnValueOnce(mockNavigate);
+    // Check if checkboxes are rendered
+    expect(screen.getByLabelText("Full Time:")).toBeInTheDocument();
+    expect(screen.getByLabelText("Part Time:")).toBeInTheDocument();
+    expect(screen.getByLabelText("Internship:")).toBeInTheDocument();
 
-    // Render the BrowseJobs component
-    const { getByText } = render(<BrowseJobs />);
-
-    // Assert that the component renders correctly
-    expect(getByText("No Description")).toBeInTheDocument();
+    // Check if submit button is rendered
+    expect(screen.getByRole("button", { name: "Enter Job Post" })).toBeInTheDocument();
   });
 
-  test("jobClickHandler function fetches job details correctly", async () => {
-    // Mock the fetch function
-    const mockFetch = jest.fn(() => {
-      return Promise.resolve({
-        json: () =>
-          Promise.resolve({
-            companyName: "Test Company",
-            numberOfPositions: 5,
-            position: "Test Position",
-            country: "Test Country",
-            address: "Test Address",
-            description: "Test Description",
-          }),
-      });
-    });
-    global.fetch = mockFetch;
+  test("submit form with valid data", () => {
+    const onSubmitFormMock = jest.fn();
+    const setSubmittedFormDataMock = jest.fn();
+    useDispatch.mockReturnValueOnce(jest.fn());
+    useDispatch.mockReturnValueOnce(onSubmitFormMock);
+    useSelector.mockReturnValueOnce("test@example.com");
+    useSelector.mockReturnValueOnce(setSubmittedFormDataMock);
 
-    // Mock the useState and useEffect hooks
-    const setState = jest.fn();
-    const useStateSpy = jest.spyOn(React, "useState");
-    useStateSpy.mockImplementationOnce(() => [null, setState]);
-    useStateSpy.mockImplementationOnce(() => [null, setState]);
+    render(
+      <Provider store={store}>
+        <FormInsideModal onSubmitForm={onSubmitFormMock} />
+      </Provider>
+    );
 
-    // Render the BrowseJobs component
-    const { getByText } = render(<BrowseJobs />);
+    // Fill in form fields
+    fireEvent.change(screen.getByLabelText("Company Name"), { target: { value: "Test Company" } });
+    fireEvent.change(screen.getByLabelText("Number Of Positions"), { target: { value: "5" } });
+    fireEvent.change(screen.getByLabelText("Postion Offered"), { target: { value: "Test Position" } });
+    fireEvent.change(screen.getByLabelText("Country"), { target: { value: "Test Country" } });
+    fireEvent.change(screen.getByLabelText("Address"), { target: { value: "Test Address" } });
+    fireEvent.change(screen.getByLabelText("Job Descripton"), { target: { value: "Test Description" } });
+    fireEvent.click(screen.getByLabelText("Full Time:"));
+    fireEvent.click(screen.getByLabelText("Part Time:"));
+    fireEvent.click(screen.getByLabelText("Internship:"));
 
-    // Call the jobClickHandler function
-    fireEvent.click(getByText("Edit"));
-    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1));
+    // Submit form
+    fireEvent.click(screen.getByRole("button", { name: "Enter Job Post" }));
 
-    // Assert that the job details are fetched correctly
-    expect(getByText("Test Company")).toBeInTheDocument();
-    expect(getByText("5")).toBeInTheDocument();
-    expect(getByText("Test Position")).toBeInTheDocument();
-    expect(getByText("Test Country")).toBeInTheDocument();
-    expect(getByText("Test Address")).toBeInTheDocument();
-    expect(getByText("Test Description")).toBeInTheDocument();
+    // Check if form is submitted
+    expect(onSubmitFormMock).toHaveBeenCalled();
+    expect(setSubmittedFormDataMock).toHaveBeenCalledWith(true);
   });
-
 });
