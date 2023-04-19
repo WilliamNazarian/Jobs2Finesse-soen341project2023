@@ -1,6 +1,8 @@
+
+// sets up the necessary dependencies for handling JWTs and loads the environment variables required for the application to function properly.
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
-
+// protect routes that require authentication by verifying the JWT token in the Authorization header of incoming requests.
 const verifyJWT = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (authHeader) {
