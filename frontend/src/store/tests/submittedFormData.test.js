@@ -1,6 +1,7 @@
 import { submittedFormDataActions, default as submittedFormDataReducer } from "./submittedFormData";
 
-//test file for
+//test file for submittedFormData.js
+
 describe("submittedFormDataReducer", () => {
   test("should set submittedFormData correctly", () => {
     const initialState = {
