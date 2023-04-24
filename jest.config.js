@@ -3,7 +3,7 @@ module.exports = {
   testEnvironment: 'node',
 
   // The file patterns that Jest will use to discover test files
-  testMatch: ['../tests/**/*.js'],
+  testMatch: ['Jobs2Finesse-soen341project2023/tests/**/*.js'],
 
   // Any additional Jest configuration settings as needed
   // ...
