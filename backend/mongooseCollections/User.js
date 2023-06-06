@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+//a Mongoose schema and model for a user, which can be used to create, retrieve, update, and delete user data in a MongoDB database.
+
 const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
@@ -43,7 +45,7 @@ userSchema.pre("save", function(next) {
   }
   next();
 });
-
+// modeling
 const User = mongoose.model("User", userSchema);
-
+// export
 module.exports = User;
