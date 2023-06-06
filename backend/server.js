@@ -1,11 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 
-
-
-const jobsRoutes = require("./routes/jobsRoutes")
-const authRoutes = require("./routes/authRoutes")
-const applicationRoutes = require("./routes/applicationRoutes")
+const jobsRoutes = require("./routes/jobsRoutes");
+const authRoutes = require("./routes/authRoutes");
+const applicationRoutes = require("./routes/applicationRoutes");
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -18,11 +16,9 @@ async function main() {
 }
 //basically with strictQuery = true you can only put whatever is in your schema in the Database, if you try to add something extra it doesn't work
 
-app.use("/jobs", jobsRoutes)
-app.use("/auth", authRoutes)
-app.use("/application", applicationRoutes)
-
-
+app.use("/jobs", jobsRoutes);
+app.use("/auth", authRoutes);
+app.use("/application", applicationRoutes);
 
 app.listen(5000, () => {
   console.log("Server running on port 5000");
