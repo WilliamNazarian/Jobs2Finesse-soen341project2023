@@ -8,9 +8,9 @@ https://youtu.be/DKLo460W6Jg (sprint 3 demo)
 
 **Members of the team:**
 
-Sana Antoun id : 40209806  | Github username : sanaantoun
-
 William Nazarian id : 40213100 | Github username : WilliamNazarian
+
+Sana Antoun id : 40209806  | Github username : sanaantoun
 
 Poula Farid id: 40208791 | Github username :  PaulFarid
 
